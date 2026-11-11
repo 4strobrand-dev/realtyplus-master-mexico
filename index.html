@@ -512,8 +512,7 @@ footer img{height:36px}
         <div class="row"><span>Franquicias activas al final</span><b id="o-net">0</b></div>
         <div class="row"><span>Ingresos por cánones de entrada</span><b id="o-can">0</b></div>
         <div class="row"><span>Ingresos por royalties fijos</span><b id="o-roy">0</b></div>
-        <div class="row"><span>Royalty a la Central (25%)</span><b id="o-cen">0</b></div>
-        <div class="total"><span>Ingreso neto acumulado para el Master</span><b id="o-tot">0</b></div>
+        <div class="total"><span>Facturación acumulada del Master</span><b id="o-tot">0</b></div>
         <p class="note">Simulación orientativa con las tarifas de referencia 2026, calculada con el royalty fijo. A cada franquicia se le cobra el mayor entre el royalty fijo y el 3% de su facturación, así que el ingreso real puede ser superior. No incluye renovaciones, partners, proveedores ni negocio internacional.</p>
         <a href="#contacto" class="btn btn-red">Quiero ver el plan completo <svg><use href="#i-arrow"/></svg></a>
       </div>
@@ -723,12 +722,11 @@ function calc(){
     }
   }
   net=(v.iron+v.quartz+v.star)*v.years;
-  const bruto=can+roy, cen=Math.max(bruto*.25,1500*12*v.years);
+  const bruto=can+roy;
   document.getElementById('o-net').textContent=net;
   document.getElementById('o-can').textContent=fmt(can);
   document.getElementById('o-roy').textContent=fmt(roy);
-  document.getElementById('o-cen').textContent='– '+fmt(cen);
-  document.getElementById('o-tot').textContent=fmt(bruto-cen);
+  document.getElementById('o-tot').textContent=fmt(bruto);
 }
 document.querySelectorAll('.sim input').forEach(i=>i.addEventListener('input',calc));calc();
 
