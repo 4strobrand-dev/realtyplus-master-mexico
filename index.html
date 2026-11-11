@@ -690,6 +690,11 @@ footer img{height:36px}
 <div class="float"><a href="#contacto" class="btn btn-red">Solicitar entrevista</a></div>
 
 <script>
+// moneda: por defecto euros; ?moneda=usd muestra dólares
+window.CUR=/[?&]moneda=usd/i.test(location.search)?'USD':'€';
+if(CUR==='USD'){const w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);let n;while(n=w.nextNode()){if(n.nodeValue.includes('€'))n.nodeValue=n.nodeValue.replace(/€/g,'USD')}}
+</script>
+<script>
 // nav
 const nav=document.getElementById('nav');
 const onScroll=()=>nav.classList.toggle('solid',scrollY>40);
@@ -710,7 +715,7 @@ if(innerWidth<=700){const g=document.querySelector('.models .grid'),f=g.querySel
 
 // simulador
 const M={iron:{c:3000,r:300},quartz:{c:6000,r:450},star:{c:15000,r:750}};
-const fmt=n=>Math.round(n).toLocaleString('de-DE')+' €';
+const fmt=n=>Math.round(n).toLocaleString('de-DE')+' '+CUR;
 function calc(){
   const v={};['iron','quartz','star','years'].forEach(k=>{v[k]=+document.getElementById('r-'+k).value;document.getElementById('v-'+k).textContent=v[k]});
   let can=0,roy=0,net=0;
