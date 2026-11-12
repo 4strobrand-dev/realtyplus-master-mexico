@@ -158,6 +158,13 @@ input[type=range]{width:100%;accent-color:var(--red);height:6px}
 .out .total b{display:block;font-size:clamp(34px,4vw,48px);font-weight:800;line-height:1.1;margin-top:4px}
 .out .note{font-size:12px;color:rgba(255,255,255,.6);margin-top:18px}
 .out .btn{margin-top:22px}
+.stabs{display:inline-flex;background:#fff;border-radius:60px;padding:6px;margin:30px 0 0;box-shadow:var(--shadow);flex-wrap:wrap;justify-content:center}
+.stabs button{border:0;background:none;font-family:inherit;font-size:15px;font-weight:600;padding:12px 22px;border-radius:50px;cursor:pointer;color:var(--muted)}
+.stabs button.on{background:var(--red);color:#fff}
+.sim .box[hidden]{display:none}
+.sim .box + .box{margin-top:30px}
+.out .row.sum{border-bottom:0;margin-top:6px;padding:14px 16px;background:rgba(255,255,255,.08);border-radius:14px}
+@media(max-width:700px){.stabs{display:flex;width:100%;margin-top:22px}.stabs button{flex:1;font-size:12.5px;padding:10px 8px;line-height:1.25}}
 @media(max-width:900px){.sim .box{grid-template-columns:1fr}.sim .in,.sim .out{padding:28px 22px}}
 
 /* SERVICIOS TABS */
@@ -500,8 +507,12 @@ footer img{height:36px}
   <div class="wrap center">
     <span class="eyebrow">Simulador</span>
     <h2>¿Cuánto puede generar <em>tu red en México?</em></h2>
-    <p class="lead">Mueve los controles con las franquicias que crees que puedes abrir cada año y mira cómo crecen tus ingresos con las tarifas de referencia 2026.</p>
-    <div class="box" style="text-align:left">
+    <p class="lead">Tus ingresos como Master vienen de dos fuentes: la red de franquicias que vendes y tu propia oficina Quartz, obligatoria para todo Master. Simula las dos en cada pestaña.</p>
+    <div class="stabs" role="tablist">
+      <button class="on" data-s="sb-fr" role="tab">Venta de franquicias</button>
+      <button data-s="sb-qz" role="tab">Tu oficina Quartz</button>
+    </div>
+    <div class="box" id="sb-fr" style="text-align:left">
       <div class="in">
         <div class="range"><label>Franquicias IRON al año <span id="v-iron">6</span></label><input type="range" id="r-iron" min="0" max="40" value="6"><small>Canon 3.000 USD · Royalty 300 USD/mes</small></div>
         <div class="range"><label>Franquicias QUARTZ al año <span id="v-quartz">4</span></label><input type="range" id="r-quartz" min="0" max="30" value="4"><small>Canon 6.000 USD · Royalty 450 USD/mes</small></div>
@@ -514,6 +525,22 @@ footer img{height:36px}
         <div class="row"><span>Ingresos por royalties fijos</span><b id="o-roy">0</b></div>
         <div class="total"><span>Facturación acumulada del Master</span><b id="o-tot">0</b></div>
         <p class="note">Simulación orientativa con las tarifas de referencia 2026, calculada con el royalty fijo. A cada franquicia se le cobra el mayor entre el royalty fijo y el 3% de su facturación, así que el ingreso real puede ser superior. No incluye renovaciones, partners, proveedores ni negocio internacional.</p>
+        <a href="#contacto" class="btn btn-red">Quiero ver el plan completo <svg><use href="#i-arrow"/></svg></a>
+      </div>
+    </div>
+    <div class="box" id="sb-qz" style="text-align:left" hidden>
+      <div class="in">
+        <div class="range"><label>Agentes inmobiliarios <span id="v-ag">5</span></label><input type="range" id="q-ag" min="1" max="30" value="5"><small>Tu equipo en la oficina Quartz</small></div>
+        <div class="range"><label>Operaciones por agente al mes <span id="v-op">2</span></label><input type="range" id="q-op" min="0.5" max="4" step="0.5" value="2"><small>Ventas cerradas por cada agente</small></div>
+        <div class="range"><label>Precio medio del inmueble <span id="v-pr">200.000</span></label><input type="range" id="q-pr" min="50000" max="1000000" step="10000" value="200000"><small>Valor medio de las propiedades que vendes</small></div>
+        <div class="range" style="margin-bottom:0"><label>Comisión inmobiliaria <span id="v-co">3%</span></label><input type="range" id="q-co" min="1" max="6" step="0.5" value="3"><small>Porcentaje que cobra la agencia por operación</small></div>
+      </div>
+      <div class="out">
+        <div class="row"><span>Operaciones al año</span><b id="o-qops">0</b></div>
+        <div class="row"><span>Facturación mensual</span><b id="o-qmes">0</b></div>
+        <div class="total"><span>Facturación bruta anual de tu Quartz</span><b id="o-qtot">0</b></div>
+        <div class="row sum"><span>Total Master en <b id="o-qy">3</b> años (franquicias + Quartz)</span><b id="o-qall">0</b></div>
+        <p class="note">Estimación orientativa de la facturación bruta de la oficina, antes de gastos y comisiones de los agentes. Toda Master Franquicia incluye abrir una oficina Quartz propia, que sirve de centro piloto en el país. El total suma la facturación de tu red de franquicias (pestaña anterior) y la de tu Quartz en los mismos años.</p>
         <a href="#contacto" class="btn btn-red">Quiero ver el plan completo <svg><use href="#i-arrow"/></svg></a>
       </div>
     </div>
@@ -726,13 +753,35 @@ function calc(){
     }
   }
   net=(v.iron+v.quartz+v.star)*v.years;
-  const bruto=can+roy;
+  const bruto=can+roy;window.__bruto=bruto;
   document.getElementById('o-net').textContent=net;
   document.getElementById('o-can').textContent=fmt(can);
   document.getElementById('o-roy').textContent=fmt(roy);
   document.getElementById('o-tot').textContent=fmt(bruto);
 }
 document.querySelectorAll('.sim input').forEach(i=>i.addEventListener('input',calc));calc();
+// simulador oficina Quartz del Master
+document.querySelectorAll('.stabs button').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('.stabs button').forEach(x=>x.classList.toggle('on',x===b));
+  document.querySelectorAll('.sim .box').forEach(x=>x.hidden=x.id!==b.dataset.s);
+}));
+const n1=n=>n.toLocaleString('de-DE',{maximumFractionDigits:1});
+function calcQ(){
+  const g=k=>+document.getElementById('q-'+k).value;
+  const ag=g('ag'),op=g('op'),pr=g('pr'),co=g('co'),yrs=+document.getElementById('r-years').value;
+  document.getElementById('v-ag').textContent=ag;
+  document.getElementById('v-op').textContent=n1(op);
+  document.getElementById('v-pr').textContent=fmt(pr);
+  document.getElementById('v-co').textContent=n1(co)+'%';
+  const ops=ag*op*12,anual=ops*pr*co/100;
+  document.getElementById('o-qops').textContent=n1(ops);
+  document.getElementById('o-qmes').textContent=fmt(anual/12);
+  document.getElementById('o-qtot').textContent=fmt(anual)+' / año';
+  document.getElementById('o-qy').textContent=yrs;
+  document.getElementById('o-qall').textContent=fmt(window.__bruto+anual*yrs);
+}
+document.querySelectorAll('.sim input').forEach(i=>i.addEventListener('input',calcQ));calcQ();
+
 
 // formulario: aquí se conecta el CRM / correo de Expansión
 document.getElementById('form').addEventListener('submit',e=>{
